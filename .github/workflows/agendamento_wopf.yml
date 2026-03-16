@@ -21,7 +21,7 @@ jobs:
           Rscript -e 'install.packages(c("rvest", "dplyr", "stringr", "xml2"))'
 
       - name: Rodar script
-        run: Rscript meu_script.R
+        run: Rscript codigo-r-opf.R
 
       - name: Salvar resultados
         run: |
