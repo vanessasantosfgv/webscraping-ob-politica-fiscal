@@ -1,0 +1,32 @@
+name: Webscraping Mensal
+
+on:
+  schedule:
+    # '0 10 1 * *' significa: Minuto 0, Hora 10 (UTC), Dia 1, Mês *, Dia da semana *
+    - cron: '0 10 1 * *'
+  workflow_dispatch: # Permite que você clique em "Run workflow" para testar agora
+
+jobs:
+  scraping_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Instalar dependências
+        run: |
+          Rscript -e 'install.packages(c("rvest", "dplyr", "stringr", "xml2"))'
+
+      - name: Rodar script
+        run: Rscript meu_script.R
+
+      - name: Salvar resultados
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add ws_opf.csv
+          git commit -m "Atualização mensal automática: $(date +'%Y-%m-%d')" || echo "Sem alterações"
+          git push
