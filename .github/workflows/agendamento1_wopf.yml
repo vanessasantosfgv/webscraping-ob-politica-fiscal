@@ -12,18 +12,20 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Listar arquivos para conferência
-        run: ls -R # Isso vai nos mostrar onde o arquivo está de verdade
-
       - name: Configurar R
         uses: r-lib/actions/setup-r@v2
 
-      - name: Instalar dependências
+      - name: Instalar dependências do Sistema (Linux)
         run: |
-          Rscript -e 'install.packages(c("rvest", "dplyr", "stringr", "xml2"))'
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Instalar Pacotes do R
+        run: |
+          Rscript -e 'install.packages(c("rvest", "dplyr", "stringr", "xml2"), dependencies = TRUE)'
 
       - name: Rodar script
-        run: Rscript ./codigo-r-opf.R # O ./ força a busca na pasta atual
+        run: Rscript ./codigo-r-opf.R
 
       - name: Salvar resultados
         run: |
