@@ -1,0 +1,34 @@
+name: Webscraping Mensal
+
+on:
+  schedule:
+    - cron: '0 10 1 * *'
+  workflow_dispatch: 
+
+jobs:
+  scraping_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Listar arquivos para conferência
+        run: ls -R # Isso vai nos mostrar onde o arquivo está de verdade
+
+      - name: Configurar R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Instalar dependências
+        run: |
+          Rscript -e 'install.packages(c("rvest", "dplyr", "stringr", "xml2"))'
+
+      - name: Rodar script
+        run: Rscript ./codigo-r-opf.R # O ./ força a busca na pasta atual
+
+      - name: Salvar resultados
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add ws_opf.csv
+          git commit -m "Atualização automática" || echo "Sem alterações"
+          git push
